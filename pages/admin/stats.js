@@ -1,39 +1,24 @@
-import { getSession } from "next-auth/react";
-import { Pool } from "pg";
+export async function getServerSideProps(context) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-});
+    const res = await fetch(`${baseUrl}/api/admin/stats`, {
+        headers: {
+            cookie: context.req.headers.cookie || "",
+        },
+    });
 
-export default async function handler(req, res) {
-  const session = await getSession({ req });
+    const data = await res.json();
 
-  // ✅ Restrict access: only admin email
-  if (!session || session.user.email !== process.env.ADMIN_EMAIL) {
-    return res.status(403).json({ error: "Forbidden" });
-  }
+    return {
+        props: { data },
+    };
+}
 
-  try {
-    const client = await pool.connect();
-
-    // Users with total downloads + last login
-    const result = await client.query(`
-      SELECT 
-        u.email,
-        u.provider,
-        COUNT(CASE WHEN ua.action = 'download' THEN 1 END) AS total_downloads,
-        MAX(CASE WHEN ua.action = 'login' THEN ua.timestamp END) AS last_login
-      FROM users u
-      LEFT JOIN user_activity ua ON u.id = ua.user_id
-      GROUP BY u.id
-      ORDER BY total_downloads DESC;
-    `);
-
-    client.release();
-    return res.status(200).json(result.rows);
-  } catch (err) {
-    console.error("DB Error in admin stats:", err);
-    return res.status(500).json({ error: "Database error" });
-  }
+export default function AdminStats({ data }) {
+    return (
+        <div style={{ padding: "40px" }}>
+            <h1>Admin Stats</h1>
+            <pre>{JSON.stringify(data, null, 2)}</pre>
+        </div>
+    );
 }
