@@ -6,35 +6,44 @@ export default function Footer() {
 
     return (
         <footer className="bg-white border-t border-gray-200 py-6">
-            <div className="flex flex-col items-center">
-                {/* Logo + Tagline */}
-                <div className="flex items-center gap-2 mb-2">
-                    <img
-                        src="/logos/data-rhino.png"
-                        alt="Data Rhino"
-                        className="h-12 w-auto"
-                    />
-                    <span className="font-bold text-lg"></span>
-                </div>
-                <p className="text-gray-500 italic mb-4">The News-Rhino of Tech.</p>
+            <div className="max-w-7xl mx-auto px-4">
+                {/* layout: column on mobile, row on md+ */}
+                <div className="w-full flex flex-col md:flex-row items-center md:items-center justify-between gap-4">
 
-                {/* Links → only Contact */}
-                <div className="flex gap-6 mb-4">
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="text-gray-600 hover:underline"
-                    >
-                        Contact
-                    </button>
-                </div>
+                    {/* LEFT: Logo + Tagline (stacked vertically) */}
+                    <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                        <img
+                            src="/logos/data-rhino.png"
+                            alt="Data Rhino"
+                            className="h-12 w-auto mb-1"
+                        />
+                        <p className="text-gray-500 italic text-sm">
+                            The News-Rhino of Tech.
+                        </p>
+                    </div>
 
-                {/* Copyright */}
-                <p className="text-sm text-gray-400">
-                    © 2025 Data Rhino. All rights reserved.
-                </p>
+
+                    {/* CENTER: Copyright (kept centered) */}
+                    <div className="w-full md:w-auto flex-1 text-center">
+                        <p className="text-sm text-gray-400">© 2025 Data Rhino. All rights reserved.</p>
+                    </div>
+
+                    {/* RIGHT: Contact + Powered by */}
+                    <div className="flex flex-col items-center md:items-end text-center md:text-right gap-1 min-w-0">
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="text-gray-600 hover:underline"
+                        >
+                            Contact
+                        </button>
+                        <p className="text-sm text-gray-500 font-semibold">Powered by Rhino Tribe</p>
+                        <a href="https://www.rhinotribe.in" className="text-sm underline text-blue-600">
+                            www.rhinotribe.in
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            {/* Contact Modal */}
             <ContactModal isOpen={showModal} onClose={() => setShowModal(false)} />
         </footer>
     );
